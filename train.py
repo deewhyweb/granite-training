@@ -69,7 +69,6 @@ model_check_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
 def formatting_prompts_func(example):
-    print(example)
     print("next call")
     output_texts = []
     for i in range(len(example['user'])):
@@ -127,6 +126,7 @@ training_setup_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
 # Start training
+print("Starting training")
 trainer.train()
 training_time = timeit.default_timer() - start_time
 trainer.save_model("./results")
