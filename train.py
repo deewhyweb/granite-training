@@ -108,7 +108,7 @@ collator = DataCollatorForCompletionOnlyLM(response_template_ids, tokenizer=toke
 qlora_config = LoraConfig(
     r=16,  # The rank of the Low-Rank Adaptation
     lora_alpha=32,  # Scaling factor for the adapted layers
-    target_modules= ["K_proj", 'v_proj', 'q_proj', "out_proj"],  # Layer names to apply LoRA to
+    target_modules= ['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'lm_head'],  # Layer names to apply LoRA to
     lora_dropout=0.1,
     bias="none"
 )
