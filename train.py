@@ -103,12 +103,12 @@ response_template = "\n<|assistant|>\n"
 response_template_ids = tokenizer.encode(response_template, add_special_tokens=False)[2:]
 collator = DataCollatorForCompletionOnlyLM(response_template_ids, tokenizer=tokenizer)
 
-
+#['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj', 'lm_head']
 # Apply qLoRA
 qlora_config = LoraConfig(
     r=16,  # The rank of the Low-Rank Adaptation
     lora_alpha=32,  # Scaling factor for the adapted layers
-    target_modules= ["K_proj", 'v_proj', 'q_proj', "out_proj"],  # Layer names to apply LoRA to
+    target_modules= ["K_proj", 'v_proj', 'q_proj', "out_proj","gate_proj", "up_proj", "down_proj", "lm_head"],  # Layer names to apply LoRA to
     lora_dropout=0.1,
     bias="none"
 )
