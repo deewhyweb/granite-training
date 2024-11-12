@@ -7,10 +7,9 @@ import timeit
 start_time = timeit.default_timer()
 from datasets import load_dataset # type: ignore
 
-#dataset = load_dataset('alespalla/chatbot_instruction_prompts')
 dataset = load_dataset('json', data_files='train_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
 test_dataset = load_dataset('json', data_files='test_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
-# split_dataset = dataset['train'].train_test_split(test_size=0.2)
+
 dataset_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
