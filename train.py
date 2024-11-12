@@ -124,8 +124,7 @@ trainer = SFTTrainer(
     tokenizer=tokenizer,
     peft_config = qlora_config,
     formatting_func=formatting_prompts_func,
-    data_collator=collator,
-    max_seq_length=max_seq_length,
+    data_collator=collator
 )
 
 training_setup_loadtime = timeit.default_timer() - start_time
