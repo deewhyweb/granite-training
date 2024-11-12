@@ -61,10 +61,12 @@ model_check_loadtime = timeit.default_timer() - start_time
 start_time = timeit.default_timer()
 def formatting_prompts_func(example):
     output_texts = []
-   
+    for i in range(len(example['user'])):
 
-    text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['user']}\n<|assistant|>\n{example['assistant']}<|endoftext|>"
-    output_texts.append(text)
+        text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['user'][i]}\n<|assistant|>\n{example['assistant'][i]}<|endoftext|>"
+        output_texts.append(text)
+    print('here')
+    print(output_texts)
     return output_texts
 
 
