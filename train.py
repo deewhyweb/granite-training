@@ -25,7 +25,7 @@ start_time = timeit.default_timer()
 
 
 
-model_checkpoint = "ibm-granite/granite-3.0-2b-instruct"
+model_checkpoint = "ibm-granite/granite-3.0-8b-instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
 
 bnb_config = BitsAndBytesConfig(
@@ -42,7 +42,21 @@ model = AutoModelForCausalLM.from_pretrained(
 
 )
 
+import re
+model_modules = str(model.modules)
+pattern = r'\((\w+)\): Linear'
+linear_layer_names = re.findall(pattern, model_modules)
+
+names = []
+# Print the names of the Linear layers
+for name in linear_layer_names:
+    names.append(name)
+
+print(names)
+
 model_loadtime = timeit.default_timer() - start_time
+
+
 
 # Apply the filter to both train and test splits
 train_filtered = dataset['train']
@@ -102,7 +116,7 @@ qlora_config = LoraConfig(
 # Initialize the SFTTrainer
 training_args = TrainingArguments(
     output_dir="./results",
-    hub_model_id="deewhyweb/granite-3.0-2b-instruct-adapter",
+    hub_model_id="deewhyweb/granite-3.0-8b-instruct-adapter",
     learning_rate=2e-4,
     per_device_train_batch_size=16,
     per_device_eval_batch_size=16,
