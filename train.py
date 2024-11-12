@@ -41,30 +41,6 @@ model_loadtime = timeit.default_timer() - start_time
 from transformers import pipeline # type: ignore
 import datasets # type: ignore
 
-# def pirateify(batch):
-#   prompts = [f"make it sound like a pirate said this, do not include any preamble or explanation only piratify the following: {response}" for response in batch['output']]
-#   # Tokenize the inputs in batch and move them to GPU
-#   inputs = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to('cuda')
-#   # Generate the pirate-like responses in batch
-#   outputs = model.generate(**inputs, max_new_tokens=256, do_sample=True, top_p=0.95, temperature=0.7)
-#   # Decode the generated tokens into text for each output in the batch
-#   pirate_responses = []
-#   for output in outputs:
-#     pr = tokenizer.decode(output, skip_special_tokens=True)
-#     if '\n\n' in pr:
-#       pirate_responses.append(pr.split('\n\n')[-1])
-#     else:
-#       pirate_responses.append(pr)
-
-#   # Move the outputs back to CPU (to free up GPU memory)
-#   inputs = inputs.to('cpu')
-#   outputs = outputs.to('cpu')
-#   # Clear the GPU cache to release any unused memory
-#   torch.cuda.empty_cache()
-#   return {
-#       'prompt': batch['instruction'],  # The original prompts (already a batch)
-#       'response': pirate_responses  # The pirate responses, generated in batch
-#   }
 
 
 def filter_long_examples(example):
@@ -100,6 +76,7 @@ model_check_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
 def formatting_prompts_func(example):
+    print(example)
     output_texts = []
     for i in range(len(example['user'])):
         text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['user'][i]}\n<|assistant|>\n{example['assistant'][i]}<|endoftext|>"
@@ -126,11 +103,11 @@ qlora_config = LoraConfig(
 # Initialize the SFTTrainer
 training_args = TrainingArguments(
     output_dir="./results",
-    hub_model_id="rawkintrevo/granite-3.0-2b-instruct-pirate-adapter",
+    hub_model_id="rawkintrevo/granite-3.0-2b-instruct-adapter",
     learning_rate=2e-4,
     per_device_train_batch_size=6,
     per_device_eval_batch_size=6,
-    num_train_epochs=3,
+    num_train_epochs=10,
     logging_steps=100,
     fp16=True,
     report_to="none"
