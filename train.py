@@ -144,3 +144,8 @@ inputs = tokenizer(input_text, return_tensors="pt")
 outputs = model.generate(**inputs, max_new_tokens=100)
 print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
+input_text = "<|user>Who are the founders of Parasol Insurance?\n<|assistant|>\n"
+inputs = tokenizer(input_text, return_tensors="pt")
+outputs = model.generate(**inputs, max_new_tokens=100)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+
