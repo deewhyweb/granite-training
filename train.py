@@ -41,13 +41,6 @@ model_loadtime = timeit.default_timer() - start_time
 from transformers import pipeline # type: ignore
 import datasets # type: ignore
 
-
-
-def filter_long_examples(example):
-    prompt_tokens = tokenizer.tokenize(example['user'])
-    response_tokens = tokenizer.tokenize(example['assistant'])  # Tokenize the response
-    return len(response_tokens) <= 200 and len(prompt_tokens) <= 50
-
 # Apply the filter to both train and test splits
 train_filtered = dataset['train']
 test_filtered = test_dataset['train']
@@ -76,9 +69,11 @@ model_check_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
 def formatting_prompts_func(example):
-    print(example)
+
     output_texts = []
     for i in range(len(example['user'])):
+        print(i)
+        print(example['user'])
         text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['user'][i]}\n<|assistant|>\n{example['assistant'][i]}<|endoftext|>"
         output_texts.append(text)
     return output_texts
