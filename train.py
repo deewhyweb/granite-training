@@ -72,8 +72,8 @@ def filter_long_examples(example):
     return len(response_tokens) <= 200 and len(prompt_tokens) <= 50
 
 # Apply the filter to both train and test splits
-train_filtered = dataset['train'].select(range(30)).filter(filter_long_examples)
-test_filtered = dataset['train'].select(range(8)).filter(filter_long_examples)
+train_filtered = dataset['train'].select(range(300)).filter(filter_long_examples)
+test_filtered = dataset['train'].select(range(301,380)).filter(filter_long_examples)
 
 print(f"train_filtered: {len(train_filtered)} observations\ntest_filtered: {len(test_filtered)} observations")
 # train_data = train_filtered.select(range(20)).map(pirateify, batched=True, batch_size=128)
