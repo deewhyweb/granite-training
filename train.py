@@ -1,11 +1,20 @@
 import transformers
+import timeit
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, BitsAndBytesConfig # type: ignore
+from peft import LoraConfig
+from trl import SFTTrainer
+from datasets import load_dataset # type: ignore
+from transformers import pipeline # type: ignore
+import datasets # type: ignore
+from trl import DataCollatorForCompletionOnlyLM # type: ignore
 
 transformers.set_seed(42)
 
-import timeit
+
 
 start_time = timeit.default_timer()
-from datasets import load_dataset # type: ignore
+
 
 dataset = load_dataset('json', data_files='train_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
 test_dataset = load_dataset('json', data_files='test_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
@@ -13,10 +22,8 @@ test_dataset = load_dataset('json', data_files='test_Mixtral-8x7B-Instruct-v0_20
 dataset_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, BitsAndBytesConfig # type: ignore
-from peft import LoraConfig
-from trl import SFTTrainer
+
+
 
 model_checkpoint = "ibm-granite/granite-3.0-2b-instruct"
 tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
@@ -37,8 +44,7 @@ model = AutoModelForCausalLM.from_pretrained(
 
 model_loadtime = timeit.default_timer() - start_time
 
-from transformers import pipeline # type: ignore
-import datasets # type: ignore
+
 
 # Apply the filter to both train and test splits
 train_filtered = dataset['train']
@@ -52,12 +58,10 @@ ft_dataset = datasets.DatasetDict({
     'test': test_filtered
 })
 ft_dataset['train'].to_pandas().head()
-import torch # type: ignore
+
 torch.cuda.empty_cache()
 start_time = timeit.default_timer()
 
-
-start_time = timeit.default_timer()
 input_text = "<|user>What is the Apex Plus package from Parasol Insurace?\n<|assistant|>\n"
 # In coding, "inheritance" typically refers to a mechanism in object-oriented programming where a new class can inherit the properties and behavior of an existing class.
 # In a legal context, "inheritance" refers to the process by which a person receives property, titles, or debts from a deceased person.
@@ -85,9 +89,6 @@ def formatting_prompts_func(example):
 
 
 response_template = "\n<|assistant|>\n"
-
-from trl import DataCollatorForCompletionOnlyLM # type: ignore
-
 response_template_ids = tokenizer.encode(response_template, add_special_tokens=False)[2:]
 collator = DataCollatorForCompletionOnlyLM(response_template_ids, tokenizer=tokenizer)
 
@@ -104,7 +105,7 @@ qlora_config = LoraConfig(
 # Initialize the SFTTrainer
 training_args = TrainingArguments(
     output_dir="./results",
-    hub_model_id="rawkintrevo/granite-3.0-2b-instruct-adapter",
+    hub_model_id="deewhyweb/granite-3.0-2b-instruct-adapter",
     learning_rate=2e-4,
     per_device_train_batch_size=6,
     per_device_eval_batch_size=6,
@@ -139,13 +140,7 @@ trainer.save_model("./results")
 
 
 input_text = "<|user>What is the Apex Plus package from Parasol Insurace?\n<|assistant|>\n"
-inputs = tokenizer(input_text, return_tensors="pt").to("cuda")
-stop_token = "<|endoftext|>"
-stop_token_id = tokenizer.encode(stop_token)[0]
-outputs = model.generate(**inputs, max_new_tokens=500, eos_token_id=stop_token_id)
+inputs = tokenizer(input_text, return_tensors="pt")
+outputs = model.generate(**inputs, max_new_tokens=100)
 print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
-
-input_ids= tokenizer(input_text, return_tensors="pt").input_ids.to("cuda")
-outputs = model.generate(input_ids=input_ids)
-print(tokenizer.decode(outputs[0]))
