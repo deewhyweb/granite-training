@@ -126,7 +126,7 @@ training_time = timeit.default_timer() - start_time
 trainer.save_model("./results")
 
 
-input_text = "<|user>Who founded Parasol insurance?\n<|assistant|>\n"
+input_text = "<|user>What is the Apex Plus package from Parasol Insurace?\n<|assistant|>\n"
 inputs = tokenizer(input_text, return_tensors="pt").to("cuda")
 stop_token = "<|endoftext|>"
 stop_token_id = tokenizer.encode(stop_token)[0]
