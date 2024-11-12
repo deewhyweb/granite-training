@@ -41,6 +41,7 @@ model = AutoModelForCausalLM.from_pretrained(
   device_map="auto"
 
 )
+model.to('cuda')
 
 import re
 model_modules = str(model.modules)
