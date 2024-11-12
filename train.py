@@ -42,6 +42,18 @@ model = AutoModelForCausalLM.from_pretrained(
 
 )
 
+import re
+model_modules = str(model.modules)
+pattern = r'\((\w+)\): Linear'
+linear_layer_names = re.findall(pattern, model_modules)
+
+names = []
+# Print the names of the Linear layers
+for name in linear_layer_names:
+    names.append(name)
+
+print(names)
+
 model_loadtime = timeit.default_timer() - start_time
 
 
