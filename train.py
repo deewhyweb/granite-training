@@ -5,7 +5,7 @@ transformers.set_seed(42)
 import timeit
 
 start_time = timeit.default_timer()
-from datasets import load_dataset
+from datasets import load_dataset # type: ignore
 
 #dataset = load_dataset('alespalla/chatbot_instruction_prompts')
 dataset = load_dataset('json', data_files='data.json')
@@ -14,7 +14,7 @@ dataset_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
 import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, BitsAndBytesConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, BitsAndBytesConfig # type: ignore
 from peft import LoraConfig
 from trl import SFTTrainer
 
@@ -37,8 +37,8 @@ model = AutoModelForCausalLM.from_pretrained(
 
 model_loadtime = timeit.default_timer() - start_time
 
-from transformers import pipeline
-import datasets
+from transformers import pipeline # type: ignore
+import datasets # type: ignore
 
 def pirateify(batch):
   prompts = [f"make it sound like a pirate said this, do not include any preamble or explanation only piratify the following: {response}" for response in batch['output']]
@@ -76,19 +76,19 @@ train_filtered = dataset['train'].select(range(30)).filter(filter_long_examples)
 test_filtered = dataset['train'].select(range(8)).filter(filter_long_examples)
 
 print(f"train_filtered: {len(train_filtered)} observations\ntest_filtered: {len(test_filtered)} observations")
-pirate_train = train_filtered.select(range(20)).map(pirateify, batched=True, batch_size=128)
-pirate_test = test_filtered.select(range(5)).map(pirateify, batched=True, batch_size=128)
+train_data = train_filtered.select(range(20)).map(pirateify, batched=True, batch_size=128)
+test_data = test_filtered.select(range(5)).map(pirateify, batched=True, batch_size=128)
 
 # Save the new dataset
-pirate_dataset = datasets.DatasetDict({
-    'train': pirate_train,
-    'test': pirate_test
+ft_dataset = datasets.DatasetDict({
+    'train': train_data,
+    'test': test_data
 })
-pirate_dataset['train'].to_pandas().head()
-import torch
+ft_dataset['train'].to_pandas().head()
+import torch # type: ignore
 torch.cuda.empty_cache()
 start_time = timeit.default_timer()
-input_text = "<|user>What does 'inheritance' mean?\n<|assistant|>\n"
+input_text = "<|user>Who founded Parasol Insurance?\n<|assistant|>\n"
 
 inputs = tokenizer(input_text, return_tensors="pt")
 
@@ -107,7 +107,7 @@ def formatting_prompts_func(example):
 
 response_template = "\n<|assistant|>\n"
 
-from trl import DataCollatorForCompletionOnlyLM
+from trl import DataCollatorForCompletionOnlyLM # type: ignore
 
 response_template_ids = tokenizer.encode(response_template, add_special_tokens=False)[2:]
 collator = DataCollatorForCompletionOnlyLM(response_template_ids, tokenizer=tokenizer)
@@ -140,8 +140,8 @@ max_seq_length = 250
 trainer = SFTTrainer(
     model=model,
     args=training_args,
-    train_dataset=pirate_dataset['train'],
-    eval_dataset=pirate_dataset['test'],
+    train_dataset=ft_dataset['train'],
+    eval_dataset=ft_dataset['test'],
     tokenizer=tokenizer,
     peft_config = qlora_config,
     formatting_func=formatting_prompts_func,
@@ -158,7 +158,7 @@ training_time = timeit.default_timer() - start_time
 trainer.save_model("./results")
 
 
-input_text = "<|user>What does 'inheritance' mean?\n<|assistant|>\n"
+input_text = "<|user>Who founded Parasol insurance?\n<|assistant|>\n"
 inputs = tokenizer(input_text, return_tensors="pt").to("cuda")
 stop_token = "<|endoftext|>"
 stop_token_id = tokenizer.encode(stop_token)[0]
