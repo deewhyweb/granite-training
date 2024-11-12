@@ -63,7 +63,7 @@ def formatting_prompts_func(example):
     output_texts = []
    
 
-    text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['user'][i]}\n<|assistant|>\n{example['assistant'][i]}<|endoftext|>"
+    text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['user']}\n<|assistant|>\n{example['assistant']}<|endoftext|>"
     output_texts.append(text)
     return output_texts
 
