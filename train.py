@@ -70,6 +70,7 @@ def formatting_prompts_func(example):
         output_texts.append(text)
     return output_texts
 
+
 response_template = "\n<|assistant|>\n"
 
 from trl import DataCollatorForCompletionOnlyLM # type: ignore
@@ -100,7 +101,7 @@ training_args = TrainingArguments(
     report_to="none"
 )
 
-max_seq_length = 250
+max_seq_length = 2500
 
 trainer = SFTTrainer(
     model=model,
