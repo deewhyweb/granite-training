@@ -58,12 +58,6 @@ ft_dataset['train'].to_pandas().head()
 import torch # type: ignore
 torch.cuda.empty_cache()
 start_time = timeit.default_timer()
-input_text = "<|user>Who founded Parasol Insurance?\n<|assistant|>\n"
-
-inputs = tokenizer(input_text, return_tensors="pt")
-
-outputs = model.generate(**inputs, max_new_tokens=100)
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))
 
 model_check_loadtime = timeit.default_timer() - start_time
 
