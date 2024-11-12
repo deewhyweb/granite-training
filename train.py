@@ -46,8 +46,6 @@ train_filtered = dataset['train']
 test_filtered = test_dataset['train']
 
 print(f"train_filtered: {len(train_filtered)} observations\ntest_filtered: {len(test_filtered)} observations")
-# train_data = train_filtered.select(range(20)).map(pirateify, batched=True, batch_size=128)
-# test_data = test_filtered.select(range(5)).map(pirateify, batched=True, batch_size=128)
 
 # Save the new dataset
 ft_dataset = datasets.DatasetDict({
