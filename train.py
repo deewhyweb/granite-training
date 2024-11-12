@@ -67,8 +67,8 @@ import datasets # type: ignore
 
 
 def filter_long_examples(example):
-    prompt_tokens = tokenizer.tokenize(example['instruction'])
-    response_tokens = tokenizer.tokenize(example['output'])  # Tokenize the response
+    prompt_tokens = tokenizer.tokenize(example['user'])
+    response_tokens = tokenizer.tokenize(example['assistant'])  # Tokenize the response
     return len(response_tokens) <= 200 and len(prompt_tokens) <= 50
 
 # Apply the filter to both train and test splits
