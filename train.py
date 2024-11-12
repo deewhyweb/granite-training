@@ -41,8 +41,18 @@ model = AutoModelForCausalLM.from_pretrained(
   device_map="auto"
 
 )
-model.to('cuda')
 
+import re
+model_modules = str(model.modules)
+pattern = r'\((\w+)\): Linear'
+linear_layer_names = re.findall(pattern, model_modules)
+
+names = []
+# Print the names of the Linear layers
+for name in linear_layer_names:
+    names.append(name)
+
+print(names)
 
 model_loadtime = timeit.default_timer() - start_time
 
@@ -98,7 +108,7 @@ collator = DataCollatorForCompletionOnlyLM(response_template_ids, tokenizer=toke
 qlora_config = LoraConfig(
     r=16,  # The rank of the Low-Rank Adaptation
     lora_alpha=32,  # Scaling factor for the adapted layers
-    target_modules= ['q_proj', 'k_proj', 'v_proj'],  # Layer names to apply LoRA to
+    target_modules= ["K_proj", 'v_proj', 'q_proj', "out_proj"],  # Layer names to apply LoRA to
     lora_dropout=0.1,
     bias="none"
 )
