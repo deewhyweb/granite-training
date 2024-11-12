@@ -8,8 +8,8 @@ start_time = timeit.default_timer()
 from datasets import load_dataset # type: ignore
 
 #dataset = load_dataset('alespalla/chatbot_instruction_prompts')
-train_filtered = load_dataset('json', data_files='train_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
-test_filtered = dataset = load_dataset('json', data_files='test_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
+dataset = load_dataset('json', data_files='train_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
+test_dataset = dataset = load_dataset('json', data_files='test_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
 # split_dataset = dataset['train'].train_test_split(test_size=0.2)
 dataset_loadtime = timeit.default_timer() - start_time
 
@@ -73,8 +73,8 @@ def filter_long_examples(example):
     return len(response_tokens) <= 200 and len(prompt_tokens) <= 50
 
 # Apply the filter to both train and test splits
-# train_filtered = dataset['train'].select(range(300)).filter(filter_long_examples)
-# test_filtered = test_dataset['train'].select(range(301,380)).filter(filter_long_examples)
+train_filtered = dataset['train']
+test_filtered = test_dataset['train']
 
 print(f"train_filtered: {len(train_filtered)} observations\ntest_filtered: {len(test_filtered)} observations")
 # train_data = train_filtered.select(range(20)).map(pirateify, batched=True, batch_size=128)
