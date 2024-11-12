@@ -56,6 +56,18 @@ import torch # type: ignore
 torch.cuda.empty_cache()
 start_time = timeit.default_timer()
 
+
+start_time = timeit.default_timer()
+input_text = "<|user>What is the Apex Plus package from Parasol Insurace?\n<|assistant|>\n"
+# In coding, "inheritance" typically refers to a mechanism in object-oriented programming where a new class can inherit the properties and behavior of an existing class.
+# In a legal context, "inheritance" refers to the process by which a person receives property, titles, or debts from a deceased person.
+
+
+inputs = tokenizer(input_text, return_tensors="pt")
+
+outputs = model.generate(**inputs, max_new_tokens=100)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+
 model_check_loadtime = timeit.default_timer() - start_time
 
 start_time = timeit.default_timer()
