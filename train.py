@@ -115,7 +115,6 @@ training_args = TrainingArguments(
     report_to="none"
 )
 
-max_seq_length = 2500
 
 trainer = SFTTrainer(
     model=model,
