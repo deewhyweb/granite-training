@@ -8,7 +8,7 @@ start_time = timeit.default_timer()
 from datasets import load_dataset # type: ignore
 
 #dataset = load_dataset('alespalla/chatbot_instruction_prompts')
-dataset = load_dataset('json', data_files='data.json')
+dataset = load_dataset('json', data_files='train_Mixtral-8x7B-Instruct-v0_2024-11-12T15_54_01.jsonl')
 # split_dataset = dataset['train'].train_test_split(test_size=0.2)
 dataset_loadtime = timeit.default_timer() - start_time
 
@@ -40,30 +40,30 @@ model_loadtime = timeit.default_timer() - start_time
 from transformers import pipeline # type: ignore
 import datasets # type: ignore
 
-def pirateify(batch):
-  prompts = [f"make it sound like a pirate said this, do not include any preamble or explanation only piratify the following: {response}" for response in batch['output']]
-  # Tokenize the inputs in batch and move them to GPU
-  inputs = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to('cuda')
-  # Generate the pirate-like responses in batch
-  outputs = model.generate(**inputs, max_new_tokens=256, do_sample=True, top_p=0.95, temperature=0.7)
-  # Decode the generated tokens into text for each output in the batch
-  pirate_responses = []
-  for output in outputs:
-    pr = tokenizer.decode(output, skip_special_tokens=True)
-    if '\n\n' in pr:
-      pirate_responses.append(pr.split('\n\n')[-1])
-    else:
-      pirate_responses.append(pr)
+# def pirateify(batch):
+#   prompts = [f"make it sound like a pirate said this, do not include any preamble or explanation only piratify the following: {response}" for response in batch['output']]
+#   # Tokenize the inputs in batch and move them to GPU
+#   inputs = tokenizer(prompts, return_tensors="pt", padding=True, truncation=True).to('cuda')
+#   # Generate the pirate-like responses in batch
+#   outputs = model.generate(**inputs, max_new_tokens=256, do_sample=True, top_p=0.95, temperature=0.7)
+#   # Decode the generated tokens into text for each output in the batch
+#   pirate_responses = []
+#   for output in outputs:
+#     pr = tokenizer.decode(output, skip_special_tokens=True)
+#     if '\n\n' in pr:
+#       pirate_responses.append(pr.split('\n\n')[-1])
+#     else:
+#       pirate_responses.append(pr)
 
-  # Move the outputs back to CPU (to free up GPU memory)
-  inputs = inputs.to('cpu')
-  outputs = outputs.to('cpu')
-  # Clear the GPU cache to release any unused memory
-  torch.cuda.empty_cache()
-  return {
-      'prompt': batch['instruction'],  # The original prompts (already a batch)
-      'response': pirate_responses  # The pirate responses, generated in batch
-  }
+#   # Move the outputs back to CPU (to free up GPU memory)
+#   inputs = inputs.to('cpu')
+#   outputs = outputs.to('cpu')
+#   # Clear the GPU cache to release any unused memory
+#   torch.cuda.empty_cache()
+#   return {
+#       'prompt': batch['instruction'],  # The original prompts (already a batch)
+#       'response': pirate_responses  # The pirate responses, generated in batch
+#   }
 
 
 def filter_long_examples(example):
@@ -76,13 +76,13 @@ train_filtered = dataset['train'].select(range(30)).filter(filter_long_examples)
 test_filtered = dataset['train'].select(range(8)).filter(filter_long_examples)
 
 print(f"train_filtered: {len(train_filtered)} observations\ntest_filtered: {len(test_filtered)} observations")
-train_data = train_filtered.select(range(20)).map(pirateify, batched=True, batch_size=128)
-test_data = test_filtered.select(range(5)).map(pirateify, batched=True, batch_size=128)
+# train_data = train_filtered.select(range(20)).map(pirateify, batched=True, batch_size=128)
+# test_data = test_filtered.select(range(5)).map(pirateify, batched=True, batch_size=128)
 
 # Save the new dataset
 ft_dataset = datasets.DatasetDict({
-    'train': train_data,
-    'test': test_data
+    'train': train_filtered,
+    'test': test_filtered
 })
 ft_dataset['train'].to_pandas().head()
 import torch # type: ignore
@@ -101,7 +101,7 @@ start_time = timeit.default_timer()
 def formatting_prompts_func(example):
     output_texts = []
     for i in range(len(example['prompt'])):
-        text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['prompt'][i]}\n<|assistant|>\n{example['response'][i]}<|endoftext|>"
+        text = f"<|system|>\nYou are a helpful assistant\n<|user|>\n{example['user'][i]}\n<|assistant|>\n{example['assistant'][i]}<|endoftext|>"
         output_texts.append(text)
     return output_texts
 
