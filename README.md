@@ -1,0 +1,1 @@
+pip install transformers datasets accelerate bitsandbytes peft trl
