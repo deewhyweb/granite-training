@@ -5,7 +5,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Model and tokenizer paths
-model_path = "./merged"
+model_path = "/home/instruct/granite-training/merged"
 
 # Load the tokenizer
 tokenizer = AutoTokenizer.from_pretrained(model_path)
