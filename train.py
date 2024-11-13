@@ -3,7 +3,7 @@ import timeit
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, BitsAndBytesConfig # type: ignore
 from peft import LoraConfig
-from trl import SFTTrainer
+from trl import SFTConfig, SFTTrainer
 from datasets import load_dataset # type: ignore
 from transformers import pipeline # type: ignore
 import datasets # type: ignore
@@ -108,13 +108,14 @@ collator = DataCollatorForCompletionOnlyLM(response_template_ids, tokenizer=toke
 qlora_config = LoraConfig(
     r=32,  # The rank of the Low-Rank Adaptation
     lora_alpha=32,  # Scaling factor for the adapted layers
-    target_modules= ["K_proj", 'v_proj', 'q_proj', "out_proj"],  # Layer names to apply LoRA to
+    target_modules= "all-linear",  # Layer names to apply LoRA to
     lora_dropout=0.1,
     bias="none"
 )
 
 # Initialize the SFTTrainer
-training_args = TrainingArguments(
+training_args = SFTConfig(
+    max_seq_length=512,
     output_dir="./results",
     hub_model_id="deewhyweb/granite-3.0-8b-instruct-adapter",
     learning_rate=2e-4,
