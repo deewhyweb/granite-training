@@ -12,9 +12,6 @@ lora_model_path_1 = "./results"
 
 peft_config_1 = PeftConfig.from_pretrained(lora_model_path_1)
 
-
-lora_model_1 = PeftModel.from_pretrained(model, lora_model_path_1, peft_config=peft_config_1)
-
 model = PeftModel.from_pretrained(base_model, lora_model_1)
 merged_model = model.merge_and_unload()
 
