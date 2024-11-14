@@ -6,14 +6,15 @@ IMPORTANT: for mistral, you must use one of the provided mistral tool call
 templates, or your own - the model default doesn't work for tool calls with vLLM
 See the vLLM docs on OpenAI server & tool calling for more details.
 
-vllm serve --model mistralai/Mistral-7B-Instruct-v0.3 \
-            --chat-template examples/tool_chat_template_mistral.jinja \
-            --enable-auto-tool-choice --tool-call-parser mistral
+sudo dnf -y install libcudnn8 libcudnn8-devel cuda-cccl-12-4 libnccl-2.22.3-1+cuda12.4.x86_64
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/home/instruct/.local/lib/python3.11/site-packages/nvidia/cudnn/lib
+pip install git+https://github.com/vllm-project/vllm.git
 
-OR
-vllm serve --model NousResearch/Hermes-2-Pro-Llama-3-8B \
-            --chat-template examples/tool_chat_template_hermes.jinja \
-            --enable-auto-tool-choice --tool-call-parser hermes
+vllm serve rh-rad-ai-roadshow/granite-3-parasol-instruct \
+            --chat-template granite.jinja \
+             --tool-call-parser granite
+
+
 """
 import json
 
