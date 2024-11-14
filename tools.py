@@ -12,7 +12,7 @@ pip install git+https://github.com/vllm-project/vllm.git
 
 vllm serve rh-rad-ai-roadshow/granite-3-parasol-instruct \
             --chat-template granite.jinja \
-             --tool-call-parser granite
+             --tool-call-parser granite --enable-auto-tool-choice
 
 
 """
