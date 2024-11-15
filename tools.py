@@ -10,7 +10,7 @@ sudo dnf -y install libcudnn8 libcudnn8-devel cuda-cccl-12-4 libnccl-2.22.3-1+cu
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib64:/home/instruct/.local/lib/python3.11/site-packages/nvidia/cudnn/lib
 pip install git+https://github.com/vllm-project/vllm.git
 
-vllm serve rh-rad-ai-roadshow/granite-3-parasol-instruct \
+vllm serve ibm-granite/granite-3.0-8b-instruct \
             --chat-template granite.jinja \
              --tool-call-parser granite --enable-auto-tool-choice
 
